@@ -1,0 +1,25 @@
+* MAGMA 
+
+** TODO[2/2] Introduction 
+
+   - [X] Using a CPU
+
+     File : magma_cpu.c
+
+   - [X] Using a GPU
+   
+     File : magma_gpu.c
+
+** TODO[1/2] Synchronous DGEMM
+
+   - [ ] CPU based
+
+   - [X] GPU based
+
+     File : magma_dgemm_gpu.c
+
+** TODO[/] Async DGEMM
+
+   - [ ] CPU based 
+
+   - [ ] GPU based
