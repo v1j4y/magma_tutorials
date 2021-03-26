@@ -17,28 +17,58 @@ int run_magma_dgemm_gpu()
  int* ipiv = new int[ n ];
 
  double *dA, *dB, *dC;
- magma_dmalloc( &dA, ldda*n ); 
- magma_dmalloc( &dB, lddb*n); 
- magma_dmalloc( &dC, lddc*n); 
+ double *A = new double[ lda*n ];
+ double *B = new double[ ldb*n ];
+ double *C = new double[ ldc*n ];
+ 
+ magma_dmalloc( &dA, lda*n ); 
+ magma_dmalloc( &dB, ldb*n); 
+ magma_dmalloc( &dC, ldc*n); 
  assert( dA != nullptr );
  assert( dB != nullptr );
  assert( dC != nullptr );
+
+ // Fill A and B
+ for(int i=0;i<lda*n;++i)
+ {
+   A[i] = (float) rand()/RAND_MAX;
+ }
+ for(int i=0;i<ldb*n;++i)
+ {
+   B[i] = (float) rand()/RAND_MAX;
+ }
 
  int device;
  magma_queue_t queue;
  magma_getdevice( &device );
  magma_queue_create( device, &queue );
+
+ // copy A, B to dA, dB
+ magma_dsetmatrix( n, n,
+ A, lda,
+ dA, lda, queue );
+
+ magma_dsetmatrix( n, n,
+ B, ldb,
+ dB, ldb, queue );
+
  // C = -A B + C
  magma_dgemm( MagmaNoTrans,
  MagmaNoTrans, m, n, k,
- -1.0, dA, ldda,
- dB, lddb,
- 1.0, dC, lddc, queue );
+ -1.0, dA, lda,
+ dB, ldb,
+ 1.0, dC, ldc, queue );
+
  // ... do concurrent work on CPU
  // wait for gemm to finish
  magma_queue_sync( queue );
 
  // ... use result in dC
+ // copy result dC to C
+ magma_dgetmatrix( n, n,
+ dC, ldc,
+ C, ldc, queue );
+
  magma_queue_destroy( queue );
  // ... cleanup
  magma_free( dA ); 
