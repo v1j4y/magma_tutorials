@@ -3,6 +3,7 @@ module fortinterface
   use fortmod
   use fortgpumod
   use fortdgemmgpumod
+  use fortdgemmasyncgpumod
   contains
 integer(C_INT) function run_magma_cpu_for() bind ( C , name='run_magma_cpu_for')
    use iso_c_binding
@@ -25,4 +26,11 @@ integer(C_INT) function run_magma_dgemm_gpu_for() bind ( C , name='run_magma_dge
    call magma_dgemm_gpu_f()
    run_magma_dgemm_gpu_for = 0
 end function run_magma_dgemm_gpu_for
+integer(C_INT) function run_magma_dgemm_async_gpu_for() bind ( C , name='run_magma_dgemm_async_gpu_for')
+   use iso_c_binding
+   use fortdgemmasyncgpumod
+   implicit none
+   call magma_dgemm_async_gpu_f()
+   run_magma_dgemm_async_gpu_for = 0
+end function run_magma_dgemm_async_gpu_for
 end module
