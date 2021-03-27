@@ -27,12 +27,12 @@ default:
 all: runtests
 
 clean : 
-	-rm *.o *.mod src/*.o src/*.mod rm bin/runtests
+	-rm *.o *.mod src/*.o src/*.mod src/test/*.o rm bin/runtests 
 
 
 # ----------------------------------------
-runtests : fortran.o src/magma_cpu.o src/magma_cpu_f.o src/magma_gpu.o src/magma_gpu_f.o src/magma_dgemm_gpu.o src/magma_dgemm_async_gpu.o src/test/runtests.o bindir
-	${FC} $(LDFLAGS) fortran.o src/magma_cpu_f.o src/magma_gpu_f.o src/magma_cpu.o src/magma_gpu.o src/magma_dgemm_gpu.o src/magma_dgemm_async_gpu.o src/test/runtests.o src/magma_interface.F90  -o ./bin/runtests -J./src $(MAGMA_LIBS) -L${GLIB} -lstdc++ #-I${MAGMA}/include -L${MAGMA}/lib ${LIB}
+runtests : fortran.o src/magma_cpu.o src/magma_cpu_f.o src/magma_gpu.o src/magma_gpu_f.o src/magma_dgemm_gpu.o src/magma_dgemm_gpu_f.o src/magma_dgemm_async_gpu.o src/test/runtests.o bindir
+	${FC} $(MAGMA_F90FLAGS) $(LDFLAGS) fortran.o src/magma_cpu_f.o src/magma_gpu_f.o src/magma_cpu.o src/magma_gpu.o src/magma_dgemm_gpu.o src/magma_dgemm_gpu_f.o src/magma_dgemm_async_gpu.o src/test/runtests.o src/magma_interface.F90  -o ./bin/runtests -J./src $(MAGMA_LIBS) -L${GLIB} -lstdc++ #-I${MAGMA}/include -L${MAGMA}/lib ${LIB}
 
 bindir : 
 	mkdir -p ./bin
@@ -44,10 +44,13 @@ fortran.o: $(CUDADIR)/src/fortran.c
 	$(CC) $(CFLAGS) $(MAGMA_CFLAGS) -DCUBLAS_GFORTRAN -c -o $@ $<
 
 src/magma_gpu_f.o :
-	${FC} -c src/magma_gpu_f.F90 -o src/magma_gpu_f.o -J./src -I${MAGMA}/include $(MAGMA_LIBS) #-L${MAGMA}/lib ${LIB}
+	${FC} $(MAGMA_F90FLAGS) -c src/magma_gpu_f.F90 -o src/magma_gpu_f.o -J./src -I${MAGMA}/include $(MAGMA_LIBS) #-L${MAGMA}/lib ${LIB}
+
+src/magma_dgemm_gpu_f.o :
+	${FC} $(MAGMA_F90FLAGS) -c src/magma_dgemm_gpu_f.F90 -o src/magma_dgemm_gpu_f.o -J./src -I${MAGMA}/include $(MAGMA_LIBS) #-L${MAGMA}/lib ${LIB}
 
 src/magma_cpu_f.o :
-	${FC} -c src/magma_cpu_f.F90 -o src/magma_cpu_f.o -J./src -I${MAGMA}/include $(MAGMA_LIBS) #-L${MAGMA}/lib ${LIB}
+	${FC} $(MAGMA_F90FLAGS) -c src/magma_cpu_f.F90 -o src/magma_cpu_f.o -J./src -I${MAGMA}/include $(MAGMA_LIBS) #-L${MAGMA}/lib ${LIB}
 
 src/magma_cpu.o : 
 	${CPP} $(CFLAGS) $(MAGMA_CFLAGS) -DCUBLAS_GFORTRAN -c src/magma_cpu.cc -o src/magma_cpu.o
