@@ -1,4 +1,6 @@
-program magma_cpu_f
+module fortmodule
+  contains
+subroutine magma_cpu_f()
   use magma_dfortran
   implicit none
   integer :: n, nrhs
@@ -26,5 +28,6 @@ program magma_cpu_f
   deallocate(ipiv);
 
   call magmaf_finalize
-  print *,"Success CPU !\n"
-end program magma_cpu_f
+  print *,"TEST1(F): Success CPU !\n"
+end subroutine magma_cpu_f
+end module
