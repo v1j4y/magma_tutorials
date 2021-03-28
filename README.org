@@ -10,16 +10,16 @@
    
      File : magma_gpu.c
 
-** TODO[1/2] Synchronous DGEMM
+** TODO[1/1] Synchronous DGEMM
 
-   - [ ] CPU based
+   - CPU based
 
    - [X] GPU based
 
      File : magma_dgemm_gpu.c
 
-** TODO[/] Async DGEMM
+** TODO[2/2] Async DGEMM
 
-   - [ ] CPU based 
+   - [X] CPU based 
 
-   - [ ] GPU based
+   - [X] GPU based
