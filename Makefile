@@ -1,5 +1,11 @@
-CC            = gcc
-CPP           = g++
+CC            = gcc -O2 -Wall -Wextra -Wchkp -Wmissing-include-dirs -Wswitch-default -Wunused \
+  -Wduplicated-branches -Wduplicated-cond -Wshadow -Wpointer-arith -Wundef -Wunused-macros \
+  -Wcast-qual -Wzero-as-null-pointer-constant -Wparentheses -Wuseless-cast -Wsign-conversion \
+  -Wlogical-op -Wredundant-decls -Wrestrict -Winvalid-pch -Warray-bounds=2 
+CPP           =g++ -O2 -Wall -Wextra -Wchkp -Wmissing-include-dirs -Wswitch-default -Wunused \
+  -Wduplicated-branches -Wduplicated-cond -Wshadow -Wpointer-arith -Wundef -Wunused-macros \
+  -Wcast-qual -Wzero-as-null-pointer-constant -Wparentheses -Wuseless-cast -Wsign-conversion \
+  -Wlogical-op -Wredundant-decls -Wrestrict -Winvalid-pch -Warray-bounds=2 
 FC            = gfortran
 LD            = gcc
 CFLAGS        = -Wall
@@ -27,12 +33,12 @@ default:
 all: runtests
 
 clean : 
-	-rm *.o *.mod src/*.o src/*.mod src/test/*.o rm bin/runtests 
+	-rm *.o *.mod src/*.o src/*.mod src/test/*.o bin/runtests 
 
 
 # ----------------------------------------
-runtests : fortran.o src/magma_cpu.o src/magma_cpu_f.o src/magma_gpu.o src/magma_gpu_f.o src/magma_dgemm_gpu.o src/magma_dgemm_gpu_f.o src/magma_dgemm_async_gpu.o src/magma_dgemm_async_gpu_f.o src/test/runtests.o bindir
-	${FC} $(MAGMA_F90FLAGS) $(LDFLAGS) fortran.o src/magma_cpu_f.o src/magma_gpu_f.o src/magma_cpu.o src/magma_gpu.o src/magma_dgemm_gpu.o src/magma_dgemm_gpu_f.o src/magma_dgemm_async_gpu.o src/magma_dgemm_async_gpu_f.o src/test/runtests.o src/magma_interface.F90  -o ./bin/runtests -J./src $(MAGMA_LIBS) -L${GLIB} -lstdc++ #-I${MAGMA}/include -L${MAGMA}/lib ${LIB}
+runtests : fortran.o src/magma_cpu.o src/magma_cpu_f.o src/magma_gpu.o src/magma_gpu_f.o src/magma_dgemm_gpu.o src/magma_dgemm_gpu_f.o src/magma_dgemm_async_gpu.o src/magma_dgemm_async_batched_gpu.o src/magma_dgemm_async_gpu_f.o src/test/runtests.o bindir
+	${FC} $(MAGMA_F90FLAGS) $(LDFLAGS) fortran.o src/magma_cpu_f.o src/magma_gpu_f.o src/magma_cpu.o src/magma_gpu.o src/magma_dgemm_gpu.o src/magma_dgemm_gpu_f.o src/magma_dgemm_async_gpu.o src/magma_dgemm_async_batched_gpu.o src/magma_dgemm_async_gpu_f.o src/test/runtests.o src/magma_interface.F90  -o ./bin/runtests -J./src $(MAGMA_LIBS) -L${GLIB} -lstdc++ #-I${MAGMA}/include -L${MAGMA}/lib ${LIB}
 
 bindir : 
 	mkdir -p ./bin
@@ -66,3 +72,7 @@ src/magma_dgemm_gpu.o :
 
 src/magma_dgemm_async_gpu.o : 
 	${CPP} $(CFLAGS) $(MAGMA_CFLAGS) -DCUBLAS_GFORTRAN -c src/magma_dgemm_async_gpu.cc -o src/magma_dgemm_async_gpu.o
+
+src/magma_dgemm_async_batched_gpu.o : 
+	${CPP} $(CFLAGS) $(MAGMA_CFLAGS) -DCUBLAS_GFORTRAN -c src/magma_dgemm_async_batched_gpu.cc -o src/magma_dgemm_async_batched_gpu.o
+
